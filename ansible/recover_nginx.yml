@@ -1,0 +1,26 @@
+---
+- name: Recover NGINX service
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Ensure NGINX is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+
+    - name: Verify NGINX HTTP response
+      ansible.builtin.uri:
+        url: http://127.0.0.1
+        method: GET
+        status_code: 200
+      register: nginx_health
+      retries: 5
+      delay: 2
+      until: nginx_health.status == 200
+
+    - name: Report successful recovery
+      ansible.builtin.debug:
+        msg: "NGINX is running and HTTP health check passed."

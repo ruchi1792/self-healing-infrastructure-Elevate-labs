@@ -1,0 +1,32 @@
+# Python virtual environments
+venv/
+.venv/
+webhook/venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*password*
+*secret*
+*credentials*
+secrets/
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Editors and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
