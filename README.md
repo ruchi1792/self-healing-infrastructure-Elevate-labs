@@ -70,3 +70,37 @@ self-healing-infrastructure/
 The NGINX recovery workflow was tested by stopping NGINX and verifying that the monitoring and alerting pipeline triggered automated recovery.
 
 The CPU alert rule was loaded and verified in Prometheus. Actual high-CPU email delivery has not yet been demonstrated.
+
+## Prometheus Monitoring Dashboard
+
+The following screenshot demonstrates CPU utilization monitoring through Prometheus.
+
+![Prometheus CPU Monitoring](evidence/06-CPU-Monitoring.PNG)
+
+## Detailed System Architecture
+
+```mermaid
+flowchart TD
+    N[NGINX Web Server]
+
+    B[Blackbox Exporter]
+    NE[Node Exporter]
+    P[Prometheus Monitoring]
+    AM[Alertmanager]
+
+    F[Flask Webhook Receiver]
+    A[Ansible Recovery Playbook]
+    G[Gmail Email Notifications]
+
+    N -->|HTTP Health Check| B
+    B -->|Probe Metrics| P
+    NE -->|CPU and System Metrics| P
+
+    P -->|NginxDown Alert| AM
+    P -->|HighCPUUsage Alert| AM
+
+    AM -->|NginxDown Webhook| F
+    F -->|Validated Recovery Request| A
+    A -->|Ensure NGINX Running| N
+
+    AM -->|Email Notifications| G
