@@ -1,161 +1,129 @@
-# 🛠️ Self-Healing Infrastructure
+# 🚀 Self-Healing Infrastructure Using Prometheus, Alertmanager, Flask & Ansible
 
-### Automated Infrastructure Monitoring, Alerting & Recovery
+![Ubuntu](https://img.shields.io/badge/Ubuntu-WSL2-E95420?logo=ubuntu)
+![NGINX](https://img.shields.io/badge/NGINX-Web%20Server-009639?logo=nginx)
+![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C?logo=prometheus)
+![Alertmanager](https://img.shields.io/badge/Alertmanager-Alerting-E6522C?logo=prometheus)
+![Python](https://img.shields.io/badge/Python-Flask-3776AB?logo=python)
+![Ansible](https://img.shields.io/badge/Ansible-Automation-EE0000?logo=ansible)
 
-An infrastructure automation project designed to monitor service availability, detect failures, generate alerts, and perform automated service recovery using **Prometheus, Alertmanager, Flask, Ansible, and NGINX**.
+## 📌 Project Overview
 
----
+This project demonstrates how to build a **Self-Healing Infrastructure** system using Prometheus, Alertmanager, Flask, Ansible, and NGINX.
 
-## 📌 1. Project Overview
+The solution continuously monitors NGINX availability and system resource utilization. When an NGINX outage is detected, Prometheus triggers an alert, Alertmanager forwards it to a Flask webhook, and Ansible automatically executes the recovery playbook to restore the service.
 
-The **Self-Healing Infrastructure** project demonstrates how monitoring and automation tools can be integrated to detect infrastructure failures and initiate recovery actions with minimal manual intervention.
-
-The system continuously monitors NGINX availability and system resource utilization. When an NGINX outage is detected, an automated alerting and recovery workflow is triggered to restore the service.
-
-### ✨ Key Features
-
-- 🔍 **Infrastructure Monitoring** – Continuous NGINX availability monitoring.
-- 📊 **Metrics Collection** – CPU and system metrics using Node Exporter.
-- 🚨 **Automated Alerting** – Prometheus alert rules with Alertmanager integration.
-- 📧 **Email Notifications** – Gmail SMTP-based alert notifications.
-- 🤖 **Automated Recovery** – Ansible-based NGINX service recovery.
-- 🛡️ **Alert Validation** – Flask webhook validates incoming recovery alerts.
-- ✅ **Health Verification** – HTTP checks confirm service availability after recovery.
+🎯 **Goal:** Automate infrastructure monitoring, failure detection, alert notifications, and service recovery using open-source DevOps tools.
 
 ---
 
-## 🏗️ 2. System Architecture
+## 🎯 Project Objectives
 
-### High-Level Architecture
-
-**NGINX → Blackbox Exporter → Prometheus → Alertmanager → Flask Webhook → Ansible → NGINX Recovery**
-
-### Detailed Architecture Diagram
-
-```mermaid
-flowchart TD
-    N["🌐 NGINX Web Server"]
-
-    B["🔍 Blackbox Exporter"]
-    NE["📊 Node Exporter"]
-    P["Prometheus Monitoring"]
-    AM["🚨 Alertmanager"]
-
-    F["Flask Webhook Receiver"]
-    A["🤖 Ansible Recovery Playbook"]
-    G["📧 Gmail Notifications"]
-
-    N -->|HTTP Health Checks| B
-    B -->|Probe Metrics| P
-    NE -->|System Metrics| P
-
-    P -->|NginxDown Alert| AM
-    P -->|HighCPUUsage Alert| AM
-
-    AM -->|NginxDown Webhook| F
-    F -->|Validated Recovery Request| A
-    A -->|Ensure NGINX Is Running| N
-
-    AM -->|Email Notifications| G
-```
+- ✅ Monitor NGINX service availability using Blackbox Exporter.
+- 📊 Collect CPU and system metrics using Node Exporter.
+- 🚨 Configure Prometheus alert rules for infrastructure monitoring.
+- ⚙️ Implement alert routing using Alertmanager.
+- 🐍 Develop a Flask webhook to receive and validate alerts.
+- 🤖 Automate NGINX recovery using Ansible.
+- 📧 Configure Gmail SMTP for email notifications.
+- 🔐 Protect sensitive credentials and restrict recovery execution.
+- 📸 Document the implementation with project screenshots.
 
 ---
 
-## ⚙️ 3. Technology Stack
+## 🛠️ Technology Stack
 
-| Technology | Description |
+| Technology | Purpose |
 |---|---|
 | 🐧 Ubuntu on WSL2 | Operating environment |
 | 🌐 NGINX | Web server |
-| 🔍 Blackbox Exporter | HTTP endpoint monitoring |
+| 🔍 Blackbox Exporter | HTTP availability monitoring |
 | 📊 Prometheus | Metrics collection and alert evaluation |
 | 🚨 Alertmanager | Alert routing and notification management |
-| 📈 Node Exporter | System and CPU metrics |
+| 📈 Node Exporter | CPU and system metrics |
 | 🐍 Python | Application development |
 | ⚗️ Flask | Webhook receiver and alert validation |
 | 🤖 Ansible | Automated service recovery |
 | 📧 Gmail SMTP | Email notifications |
-| 🐙 Git & GitHub | Version control and repository hosting |
+| 🔧 Git | Version control |
+| 🐙 GitHub | Source code hosting |
 
 ---
 
-## 🔄 4. Automated Recovery Workflow
+## 🏗️ Architecture Diagram
 
-The automated NGINX recovery process consists of the following stages:
+```mermaid
+flowchart TD
+    A["🌐 NGINX Web Server"]
 
-1. 🔍 **Monitoring:** Blackbox Exporter continuously checks the NGINX HTTP endpoint.
-2. 🚨 **Failure Detection:** Prometheus detects failed health checks and triggers the `NginxDown` alert.
-3. 📡 **Alert Routing:** Alertmanager forwards the firing alert to the Flask webhook endpoint.
-4. 🛡️ **Alert Validation:** Flask validates the incoming alert name and status.
-5. 🤖 **Recovery Execution:** Flask invokes the predefined Ansible recovery wrapper.
-6. 🔧 **Service Restoration:** Ansible ensures that the NGINX service is running.
-7. ✅ **Health Verification:** An HTTP health check confirms that NGINX is responding successfully.
+    B["🔍 Blackbox Exporter"]
+    C["📈 Node Exporter"]
+    D["📊 Prometheus"]
+    E["🚨 Alertmanager"]
+
+    F["🐍 Flask Webhook Receiver"]
+    G["🤖 Ansible Recovery Playbook"]
+    H["📧 Gmail Notifications"]
+
+    A -->|"HTTP Health Check"| B
+    B -->|"Probe Metrics"| D
+    C -->|"CPU and System Metrics"| D
+
+    D -->|"NginxDown Alert"| E
+    D -->|"HighCPUUsage Alert"| E
+
+    E -->|"NginxDown Webhook"| F
+    F -->|"Validated Recovery Request"| G
+    G -->|"Ensure NGINX Is Running"| A
+
+    E -->|"Email Notifications"| H
+```
 
 ---
 
-## 📊 5. Monitoring and Alerting
+## 🔄 Automated Recovery Workflow
+
+1. **🔍 Infrastructure Monitoring:** Blackbox Exporter continuously checks the NGINX HTTP endpoint.
+2. **🚨 Failure Detection:** Prometheus detects failed health checks and triggers the `NginxDown` alert.
+3. **📡 Alert Routing:** Alertmanager forwards the firing alert to the Flask webhook endpoint.
+4. **🛡️ Alert Validation:** Flask validates the alert name and firing status.
+5. **🤖 Recovery Execution:** Flask invokes the predefined Ansible recovery wrapper.
+6. **🔧 Service Restoration:** Ansible ensures that the NGINX service is running.
+7. **✅ Health Verification:** An HTTP health check confirms that NGINX is responding successfully.
+8. **📧 Email Notification:** Alertmanager sends an email notification about the NGINX outage.
+
+---
+
+## 📊 Monitoring and Alert Configuration
 
 ### 🌐 NGINX Availability Monitoring
 
-- Uses Blackbox Exporter to perform HTTP health checks.
+- Blackbox Exporter performs HTTP health checks.
 - Prometheus collects probe metrics.
 - The `NginxDown` alert detects NGINX availability failures.
-- Alertmanager routes the alert to the Flask webhook and email receiver.
+- Alertmanager forwards the alert to Flask and the email notification receiver.
+- Ansible performs automated service recovery.
 
 ### 📈 CPU Utilization Monitoring
 
 - Node Exporter exposes system-level metrics.
 - Prometheus collects CPU utilization data.
-- The `HighCPUUsage` rule evaluates CPU utilization above 90% for two minutes.
-- Alertmanager routes the CPU alert to the email receiver.
+- The `HighCPUUsage` alert evaluates CPU utilization above 90% for two minutes.
+- Alertmanager routes the CPU alert to the Gmail email receiver.
 
-**Validation note:** The CPU alert rule has been loaded and verified in Prometheus. Actual high-CPU email delivery has not yet been demonstrated.
-
----
-
-## 📸 6. Project Evidence & Screenshots
-
-The following screenshots document the monitoring configuration, alerting setup, notification delivery, recovery execution, and CPU monitoring.
-
-### 6.1 🎯 Prometheus Monitoring Targets
-
-Displays the configured Prometheus targets and their monitoring status.
-
-![Prometheus Targets](evidence/01-Prometheus-Targets.PNG)
-
-### 6.2 🚨 Prometheus Alert Rules
-
-Shows the configured alert rules, including `NginxDown` and `HighCPUUsage`.
-
-![Prometheus Alert Rules](evidence/02-Prometheus-Alert-Rules.PNG)
-
-### 6.3 ⚙️ Alertmanager Configuration
-
-Demonstrates the Alertmanager receiver configuration and webhook routing.
-
-![Alertmanager Configuration](evidence/03-Alertmanager-Configuration.PNG)
-
-### 6.4 📧 Gmail Alert Notification
-
-Evidence of the NGINX outage notification successfully delivered through Gmail.
-
-![Gmail NGINX Alert](evidence/04-Gmail-NginxDown-Alert.PNG)
-
-### 6.5 🤖 Ansible Automated Recovery Logs
-
-Demonstrates the Ansible recovery execution and successful task results.
-
-![Ansible Recovery Logs](evidence/05-Ansible-Recovery-Logs.PNG)
-
-### 6.6 📈 Prometheus CPU Monitoring
-
-Displays CPU utilization monitoring through the Prometheus interface.
-
-![CPU Monitoring](evidence/06-CPU-Monitoring.PNG)
+⚠️ **Testing Note:** The CPU alert rule has been successfully loaded and verified in Prometheus. Actual high-CPU email delivery has not yet been demonstrated.
 
 ---
 
-## 📁 7. Repository Structure
+## 🔗 Project Links
+
+- 🐙 **GitHub Repository:** [View Source Code](https://github.com/ruchi1792/self-healing-infrastructure-Elevate-labs)
+- 📊 **Prometheus Dashboard:** `http://localhost:9090`
+- 🚨 **Alertmanager Dashboard:** `http://localhost:9093`
+
+---
+
+## 📂 Project Structure
 
 ```text
 self-healing-infrastructure/
@@ -180,59 +148,189 @@ self-healing-infrastructure/
 
 ---
 
-## 🧪 8. Testing and Validation
+## 💻 Project Implementation and Verification
 
-The NGINX automated recovery workflow was tested by deliberately stopping the NGINX service.
+### 📋 Prerequisites
 
-The following results were verified:
+Install and configure the following tools in Ubuntu on WSL2:
 
-- ✅ NGINX outage detected by the monitoring system.
-- ✅ `NginxDown` alert successfully triggered.
-- ✅ Alertmanager delivered the webhook to Flask.
-- ✅ Flask validated the incoming alert.
-- ✅ Ansible recovery playbook executed successfully.
-- ✅ NGINX service restored to the active state.
-- ✅ HTTP health check confirmed successful recovery.
-- ✅ Gmail notification received for the NGINX outage.
-- ✅ CPU alert rule loaded and verified in Prometheus.
+- Ubuntu
+- NGINX
+- Prometheus
+- Alertmanager
+- Blackbox Exporter
+- Node Exporter
+- Python and Flask
+- Ansible
+- Git
 
-**Testing limitation:** Actual high-CPU email delivery has not yet been demonstrated.
+### 1️⃣ Verify NGINX Service
+
+```bash
+sudo systemctl status nginx
+```
+
+### 2️⃣ Verify Prometheus Service
+
+```bash
+sudo systemctl status prometheus
+```
+
+### 3️⃣ Verify Alertmanager Service
+
+```bash
+sudo systemctl status prometheus-alertmanager
+```
+
+### 4️⃣ Verify Flask Webhook Service
+
+```bash
+sudo systemctl status self-healing-webhook
+```
+
+### 5️⃣ Verify Ansible Recovery Playbook
+
+```bash
+sudo -n /usr/local/sbin/recover-nginx
+```
+
+### 6️⃣ Verify NGINX HTTP Response
+
+```bash
+curl http://127.0.0.1
+```
+
+### 7️⃣ Verify Prometheus Targets
+
+Open the Prometheus targets page:
+
+```text
+http://localhost:9090/targets
+```
+
+### 8️⃣ Verify Alertmanager
+
+Open the Alertmanager dashboard:
+
+```text
+http://localhost:9093
+```
+
+### 9️⃣ Verify NGINX Recovery Status
+
+```bash
+sudo systemctl is-active nginx
+```
+
+Expected output:
+
+```text
+active
+```
 
 ---
 
-## 🔐 9. Security Considerations
+## 🔐 Alertmanager Email Configuration
+
+Gmail SMTP is configured to deliver infrastructure alert notifications.
+
+The configuration uses:
+
+- 📧 Gmail SMTP server: `smtp.gmail.com`
+- 🔒 SMTP port: `587`
+- 🔐 STARTTLS encryption
+- 🛡️ Protected SMTP credential file
+- 🚨 Alertmanager email receivers
+
+Sensitive SMTP credentials are stored outside the Git repository and are not included in the project source code.
+
+---
+
+## 📸 Project Screenshots
+
+The following screenshots demonstrate the monitoring configuration, alerting setup, email notification, automated recovery, and CPU monitoring.
+
+### 1. 🎯 Prometheus Monitoring Targets
+
+Displays the configured Prometheus targets and their monitoring status.
+
+![Prometheus Targets](evidence/01-Prometheus-Targets.PNG)
+
+### 2. 🚨 Prometheus Alert Rules
+
+Shows the configured alert rules, including `NginxDown` and `HighCPUUsage`.
+
+![Prometheus Alert Rules](evidence/02-Prometheus-Alert-Rules.PNG)
+
+### 3. ⚙️ Alertmanager Configuration
+
+Demonstrates the Alertmanager receiver configuration and webhook routing.
+
+![Alertmanager Configuration](evidence/03-Alertmanager-Configuration.PNG)
+
+### 4. 📧 Gmail NGINX Alert Notification
+
+Evidence of the NGINX outage notification successfully delivered through Gmail.
+
+![Gmail NGINX Alert](evidence/04-Gmail-NginxDown-Alert.PNG)
+
+### 5. 🤖 Ansible Automated Recovery Logs
+
+Shows the Ansible recovery execution and successful task results.
+
+![Ansible Recovery Logs](evidence/05-Ansible-Recovery-Logs.PNG)
+
+### 6. 📈 Prometheus CPU Monitoring
+
+Displays CPU utilization monitoring through Prometheus.
+
+![CPU Monitoring](evidence/06-CPU-Monitoring.PNG)
+
+---
+
+## 🏆 Project Results
+
+- ✅ Successfully configured infrastructure monitoring using Prometheus.
+- ✅ Implemented NGINX availability monitoring through Blackbox Exporter.
+- ✅ Configured CPU monitoring using Node Exporter.
+- ✅ Created and verified Prometheus alert rules.
+- ✅ Integrated Alertmanager with Flask webhook notifications.
+- ✅ Implemented automated NGINX recovery using Ansible.
+- ✅ Verified successful NGINX service restoration.
+- ✅ Successfully received Gmail notification for an NGINX outage.
+- ✅ Documented project implementation with screenshots.
+
+---
+
+## 🔐 Security Best Practices
 
 - Never commit passwords, SMTP credentials, API keys, or private keys.
 - Store sensitive credentials in protected files outside the Git repository.
 - Apply appropriate file permissions to credential files.
-- Use `.gitignore` to exclude secrets, virtual environments, and temporary files.
-- Review source files and screenshots before publishing the repository.
-- Restrict webhook and recovery execution permissions to authorized operations.
+- Use `.gitignore` to exclude secrets and temporary files.
+- Validate incoming webhook alerts before executing recovery operations.
+- Restrict automated recovery permissions to predefined operations.
+- Review screenshots and configuration files before publishing the repository.
 
 ---
 
-## 🎯 10. Project Outcome
+## 🔮 Future Improvements
 
-This project demonstrates the practical implementation of **self-healing infrastructure principles** through monitoring, alert management, webhook integration, and configuration automation.
-
-By integrating Prometheus, Alertmanager, Flask, and Ansible, the solution provides an automated mechanism to detect NGINX outages, initiate recovery, and verify service restoration.
-
-### 🚀 Skills Demonstrated
-
-- Infrastructure Monitoring
-- Prometheus Alerting
-- Alertmanager Configuration
-- Linux Service Management
-- Python and Flask Development
-- Ansible Automation
-- Webhook Integration
-- SMTP Email Notifications
-- Git and GitHub Version Control
+- 📊 Integrate Grafana for advanced infrastructure dashboards.
+- 📧 Expand email notification and alert management capabilities.
+- 🔔 Add additional service availability monitoring.
+- 🤖 Extend automated recovery to other infrastructure services.
+- 📈 Add historical performance analysis and monitoring reports.
+- ☁️ Explore cloud-based infrastructure monitoring and recovery.
 
 ---
 
-### ⭐ Technologies Used
+## 👩‍💻 Author
 
-**Prometheus | Alertmanager | NGINX | Flask | Ansible | Blackbox Exporter | Node Exporter | Python | Ubuntu | GitHub**
+Created as part of a **DevOps Internship Project** focused on infrastructure monitoring, alert management, and automated recovery using open-source technologies.
+
+---
+
+⭐ **If you find this project useful, consider starring the repository!**
 
 *Building reliable infrastructure through monitoring, automation, and self-healing operations.*
